@@ -1,0 +1,8 @@
+"0","accuracy_model <- fabletools::accuracy(forecast_test, bop_clean_ts)"
+"2","Warning:"
+"2"," The future dataset is incomplete, incomplete out-of-sample data will be treated as missing. 
+2 observations are missing between 2022 and 2023
+"
+"0","accuracy_model %>% "
+"0","  select(-.type) %>% "
+"0","  arrange(RMSE)"

@@ -1,0 +1,333 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(skimr)
+library(ggplot2)
+```
+
+```{r}
+#based on ftse categories minus UK
+developed_countries <- c("Australia", "Austria", "Belgium", "Luxembourg", "Canada",
+"Denmark", "Finland", "France", "Germany", "Hong Kong SAR, China", "Ireland", "Israel",
+"Italy", "Japan", "Netherlands", "New Zealand", "Norway", "Poland", "Portugal", 
+"Singapore", "Korea, Rep.", "Spain", "Sweden", "Switzerland", "North America")
+```
+
+###read in
+```{r}
+bop <- read_excel("raw_data/current_account.xls")%>%
+  row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+
+exports <- read_excel("raw_data/exports.xls")%>%
+  row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+
+imports <- read_excel("raw_data/imports.xls")%>%
+  row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+```
+```{r}
+skim(bop)
+skim(imports)
+skim(exports)
+```
+###remove unneccesary columns
+```{r}
+bop <- bop %>% 
+  select(-c(starts_with("indicator_"), `1960`))
+
+imports <- imports %>% 
+  select(-c(starts_with("indicator_")))
+
+exports <- exports %>% 
+  select(-c(starts_with("indicator_"), `1960`))
+```
+###create development classifier
+```{r}
+#create development classifier column and filter
+bop <- bop %>% 
+  mutate(
+    development_flag = case_when(
+      country_name %in% developed_countries ~ "developed country",
+      country_name == "United Kingdom" ~ "UK",
+      TRUE ~ "not developed"
+    )
+  ) %>% 
+  filter(development_flag != "not developed")
+
+
+imports <- imports %>% 
+  mutate(
+    development_flag = case_when(
+      country_name %in% developed_countries ~ "developed country",
+      country_name == "United Kingdom" ~ "UK",
+      TRUE ~ "not developed"
+    )
+  ) %>% 
+  filter(development_flag != "not developed")
+
+
+exports <- exports %>% 
+  mutate(
+    development_flag = case_when(
+      country_name %in% developed_countries ~ "developed country",
+      country_name == "United Kingdom" ~ "UK",
+      TRUE ~ "not developed"
+    )
+  ) %>% 
+  filter(development_flag != "not developed")
+
+setdiff(developed_countries, exports$country_name)
+setdiff(developed_countries, imports$country_name)
+setdiff(developed_countries, bop$country_name)
+```
+###pivot longer
+```{r}
+bop <- bop %>% 
+  pivot_longer(cols = c("1961":"2021"),
+               names_to = "date",
+               values_to = "current_account_balance") %>% 
+  mutate(current_account_balance = as.numeric(current_account_balance))
+
+imports <- imports %>% 
+  pivot_longer(cols = c("1960":"2021"),
+               names_to = "date",
+               values_to = "imports_pc_gdp") %>% 
+  mutate(imports_pc_gdp = as.numeric(imports_pc_gdp))
+
+exports <- exports %>% 
+  pivot_longer(cols = c("1961":"2021"),
+               names_to = "date",
+               values_to = "exports_pc_gdp") %>% 
+  mutate(exports_pc_gdp = as.numeric(exports_pc_gdp))
+```
+
+###missing values
+```{r}
+library(naniar)
+skim(bop) #large positive outlier
+
+bop %>% 
+  ggplot(aes(x = current_account_balance))+
+  geom_histogram()#bop variable is normally distributed, 
+
+bop <- bop %>% 
+  group_by(country_name) %>% 
+  mutate(current_account_balance = coalesce(
+    current_account_balance, median(current_account_balance, na.rm = TRUE)
+  ))
+```
+
+```{r}
+imports %>% 
+  ggplot(aes(x = imports_pc_gdp))+
+  geom_histogram() #large right skew 
+
+imports <- imports %>% 
+  group_by(country_name) %>% 
+  mutate(imports_pc_gdp = coalesce(
+    imports_pc_gdp, median(imports_pc_gdp, na.rm = TRUE)
+  ))
+
+imports <- imports %>% 
+  mutate(log_imports_pc_gdp = log(imports_pc_gdp)) #log could be for models etc
+
+skim(imports)
+```
+
+```{r}
+exports %>% 
+  ggplot(aes(x = exports_pc_gdp))+
+  geom_histogram() #large right skew 
+
+exports <- exports %>% 
+  group_by(country_name) %>% 
+  mutate(exports_pc_gdp = coalesce(
+    exports_pc_gdp, median(exports_pc_gdp, na.rm = TRUE)
+  ))
+
+exports <- exports %>% 
+  mutate(log_exports_pc_gdp = log(exports_pc_gdp)) #log could be for models etc
+```
+
+###capital account
+```{r}
+capital_account <- read_excel("raw_data/capital_account.xls")%>%
+  row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+```
+```{r}
+skim(capital_account) #huge amount of missign values
+```
+```{r}
+capital_account <- capital_account %>% 
+  select(-c(starts_with("indicator_")))
+```
+
+```{r}
+capital_account <- capital_account %>% 
+  mutate(
+    development_flag = case_when(
+      country_name %in% developed_countries ~ "developed country",
+      country_name == "United Kingdom" ~ "UK",
+      TRUE ~ "not developed"
+    )
+  ) %>% 
+  filter(development_flag != "not developed")
+
+setdiff(developed_countries, capital_account$country_name)
+```
+```{r}
+capital_account <- capital_account %>% 
+  pivot_longer(cols = c("1960":"2021"),
+               names_to = "date",
+               values_to = "capital_account_balance") %>% 
+  mutate(capital_account_balance = as.numeric(capital_account_balance))
+```
+
+```{r}
+skim(capital_account)
+
+capital_account %>% 
+  group_by(country_name) %>% 
+  ggplot(aes(x = capital_account_balance))+
+  geom_histogram()+
+  facet_wrap(~country_name)
+
+capital_account <- capital_account %>% 
+  group_by(country_name) %>% 
+  mutate(
+    capital_account_balance = coalesce(
+      capital_account_balance, median(capital_account_balance, na.rm = TRUE)
+      )
+    )
+```
+###financial account
+```{r}
+financial_account <- read_excel("raw_data/financial_account.xls") %>% 
+   row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+```
+```{r}
+skim(financial_account)
+
+financial_account <- financial_account %>% 
+  select(-c(starts_with("indicator_")))
+```
+```{r}
+financial_account <- financial_account %>% 
+  mutate(
+    development_flag = case_when(
+      country_name %in% developed_countries ~ "developed country",
+      country_name == "United Kingdom" ~ "UK",
+      TRUE ~ "not developed"
+    )
+  ) %>% 
+  filter(development_flag != "not developed")
+
+setdiff(developed_countries, financial_account$country_name)
+```
+```{r}
+financial_account <- financial_account %>% 
+  pivot_longer(cols = c("1960":"2021"),
+               names_to = "date",
+               values_to = "financial_account_balance") %>% 
+  mutate(financial_account_balance = as.numeric(financial_account_balance))
+```
+```{r}
+#missing values
+skim(financial_account)
+
+financial_account %>% 
+  ggplot(aes(x = financial_account_balance))+
+  geom_histogram() #large positive outliers
+
+#use median for each country for imputation
+
+financial_account <- financial_account %>% 
+  group_by(country_name) %>% 
+  mutate(
+    financial_account_balance = coalesce(
+      financial_account_balance, median(financial_account_balance, na.rm = TRUE)
+      )
+    )
+```
+###bop overview
+```{r}
+bop_overview <- read_excel("raw_data/bop_overview.xls") %>% 
+  row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+```
+```{r}
+bop_overview <- bop_overview %>% 
+  select(-c(starts_with("indicator_"), `1960`))
+```
+
+```{r}
+#create development classifier column and filter
+bop_overview <- bop_overview %>% 
+  mutate(
+    development_flag = case_when(
+      country_name %in% developed_countries ~ "developed country",
+      country_name == "United Kingdom" ~ "UK",
+      TRUE ~ "not developed"
+    )
+  ) %>% 
+  filter(development_flag != "not developed")
+
+unique(gdp_growth_pc$development_flag) #check development flagging has worked
+setdiff(developed_countries, gdp_growth_pc$country_name)
+```
+```{r}
+bop_overview <- bop_overview%>% 
+  pivot_longer(cols = c("1961":"2021"),
+               names_to = "date",
+               values_to = "balance_of_payments") %>% 
+  mutate(balance_of_payments= as.numeric(balance_of_payments))
+```
+```{r}
+#missing values
+skim(bop_overview)
+
+bop_overview %>% 
+  ggplot(aes(x = balance_of_payments))+
+  geom_histogram() #large positive outliers
+
+#use median for each country for imputation
+
+bop_overview <- bop_overview %>% 
+  group_by(country_name) %>% 
+  mutate(
+    balance_of_payments = coalesce(
+      balance_of_payments, median(balance_of_payments, na.rm = TRUE)
+      )
+    )
+```
+###join
+```{r}
+bop <- left_join(imports, exports) %>% 
+  left_join(., bop) %>% 
+  left_join(., capital_account) %>% 
+  left_join(., financial_account) %>% 
+  left_join(., bop_overview)
+```
+
+
+###write data to clean file
+```{r}
+write_csv(bop, "bop_clean.csv")
+```
+
+

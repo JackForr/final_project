@@ -1,0 +1,47 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(tsibble)
+library(lubridate)
+```
+
+```{r}
+productivity <- read_csv("clean_data/productivity.csv")
+
+```
+###tibble for developed vs UK
+```{r}
+productivity_ts <- productivity %>% 
+  group_by(date, development_flag) %>% 
+  summarise(across(c(multifactor_prod_agrwth, gdp_hr_worked, capital_services_pc_growth), ~mean(.x, na.rm = TRUE))) %>% 
+  ungroup() %>% 
+  as_tsibble(index = date, key = development_flag)
+```
+
+
+###GDP/hr worked vs RoW
+```{r}
+productivity_ts %>% 
+  group_by(development_flag) %>% 
+  ggplot(aes(x = date, y = gdp_hr_worked, colour = development_flag))+
+  geom_line()
+```
+
+###TFP vs Row
+```{r}
+productivity_ts %>% 
+  ggplot(aes(x = date, y = multifactor_prod_agrwth, colour = development_flag))+
+  geom_line()
+```
+
+###capital productivity 
+```{r}
+productivity_ts %>% 
+  ggplot(aes(x = date, y = capital_services_pc_growth, colour = development_flag))+
+  geom_line()
+```
+

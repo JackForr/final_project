@@ -1,0 +1,6 @@
+"0","gdp_clean_ts %>% "
+"0","  ggplot(aes(x = date, y = gdp_per_capita, colour = development_flag))+"
+"0","  geom_line()"
+"2","Warning:"
+"2"," Removed 58 row(s) containing missing values (geom_path).
+"

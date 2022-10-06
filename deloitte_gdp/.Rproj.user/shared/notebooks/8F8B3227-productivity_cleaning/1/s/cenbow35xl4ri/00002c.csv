@@ -1,0 +1,5 @@
+"0","labour_prod  <- labour_prod %>% "
+"0","  select(-c(indicator, subject, measure, frequency, flag_codes)) %>%"
+"0","  rename(gdp_hr_worked = value) %>% "
+"0","  mutate(date = make_date(time)) %>% "
+"0","  select(-time)"

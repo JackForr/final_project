@@ -1,0 +1,3 @@
+"0","#remove unneccesary columns"
+"0","gdp_growth_pc <- gdp_growth_pc %>% "
+"0","  select(-c(starts_with(""indicator_""), `1960`))"

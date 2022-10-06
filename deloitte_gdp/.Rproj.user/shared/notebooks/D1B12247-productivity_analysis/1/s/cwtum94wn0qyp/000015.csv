@@ -1,0 +1,6 @@
+"0","productivity_ts %>% "
+"0","  ggplot(aes(x = date, y = capital_services_pc_growth, colour = development_flag))+"
+"0","  geom_line()"
+"2","Warning:"
+"2"," Removed 30 row(s) containing missing values (geom_path).
+"

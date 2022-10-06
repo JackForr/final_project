@@ -1,0 +1,4 @@
+"0","bop_clean_ts <- bop_clean %>% "
+"0","  select(-country_code) %>% "
+"0","  as_tsibble(index = date,"
+"0","             key = c(country_name))"

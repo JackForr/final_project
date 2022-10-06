@@ -1,0 +1,12 @@
+"0","bop <- left_join(imports, exports) %>% "
+"0","  left_join(., bop) %>% "
+"0","  left_join(., capital_account) %>% "
+"0","  left_join(., financial_account)"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"", ""date"")[39m
+"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"", ""date"")[39m
+"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"", ""date"")[39m
+"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"", ""date"")[39m
+"

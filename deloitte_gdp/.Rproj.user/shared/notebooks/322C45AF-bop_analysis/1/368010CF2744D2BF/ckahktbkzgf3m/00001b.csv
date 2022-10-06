@@ -1,0 +1,7 @@
+"0","fit_train <- train %>%"
+"0","  model("
+"0","    naive = NAIVE(balance_of_payments),"
+"0","    mean_model = MEAN(balance_of_payments),"
+"0","    arima = ARIMA(balance_of_payments),"
+"0","    ets = ETS(balance_of_payments)"
+"0","  )"

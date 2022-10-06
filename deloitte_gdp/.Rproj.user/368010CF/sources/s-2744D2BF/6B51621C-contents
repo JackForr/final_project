@@ -1,0 +1,141 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(tsibble)
+library(lubridate)
+```
+
+```{r}
+bop_clean <- read_csv("clean_data/bop_clean.csv")
+```
+```{r}
+bop_clean <- bop_clean %>% 
+  mutate(date = make_date(date)) 
+```
+
+#create tibble object
+```{r}
+bop_clean_ts <- bop_clean %>% 
+  select(-country_code) %>% 
+  as_tsibble(index = date,
+             key = c(country_name))
+```
+#summarise for UK vs other developed countries
+```{r}
+bop_clean_ts <- bop_clean_ts %>% 
+  group_by(development_flag) %>% 
+  summarise(across(imports_pc_gdp:balance_of_payments, ~mean(.x, na.rm = TRUE)))
+```
+###UK vs RoW current account
+```{r}
+bop_clean_ts %>% 
+  group_by(development_flag) %>% 
+  ggplot(aes(x = date,
+             y = current_account_balance, colour = development_flag))+
+  geom_line()
+```
+###UK iports vs exports
+```{r}
+bop_clean_ts %>% 
+  filter(development_flag == "UK") %>% 
+  ggplot()+
+  geom_line(aes(x = date, y = imports_pc_gdp), colour = "red")+
+  geom_line(aes(x = date, y = exports_pc_gdp), colour = "green")
+```
+
+
+###UK vs RoW capital account
+```{r}
+bop_clean_ts %>% 
+  group_by(development_flag) %>% 
+  ggplot(aes(x = date,
+             y = capital_account_balance, colour = development_flag))+
+  geom_line()
+```
+###UK vs RoW financial account
+```{r}
+bop_clean_ts %>% 
+  group_by(development_flag) %>% 
+  ggplot(aes(x = date,
+             y = financial_account_balance, colour = development_flag))+
+  geom_line()
+```
+
+###Uk vs RoW BoP
+```{r}
+bop_clean_ts %>% 
+  group_by(development_flag) %>% 
+  ggplot(aes(x = date,
+             y = balance_of_payments, colour = development_flag))+
+  geom_line()
+```
+###Bop & CA vs RoW
+```{r}
+bop_clean_ts %>% 
+  group_by(development_flag) %>% 
+  ggplot()+
+  geom_line(aes(x = date,
+             y = balance_of_payments), colour = "black")+
+  geom_line(aes(x = date,
+             y = current_account_balance), colour = "blue")+
+    geom_line(aes(x = date,
+             y = financial_account_balance), colour = "green")+
+  geom_line(aes(x = date,
+             y = capital_account_balance), colour = "red")+
+  facet_wrap(~development_flag)
+```
+
+###training forecast
+```{r}
+library(fable)
+```
+
+```{r}
+bop_clean_ts <- bop_clean_ts %>% 
+  filter(development_flag == "UK") %>% 
+  select(date, balance_of_payments)
+
+bop_years <- bop_clean_ts %>%
+  distinct(date)%>%
+  arrange(desc(date))
+
+train <- bop_clean_ts %>%
+  filter_index("1961" ~ "2018")
+```
+
+```{r}
+fit_train <- train %>%
+  model(
+    naive = NAIVE(balance_of_payments),
+    mean_model = MEAN(balance_of_payments),
+    arima = ARIMA(balance_of_payments),
+    ets = ETS(balance_of_payments)
+  )
+```
+
+###testing forecasts
+```{r}
+forecast_test <- fit_train %>%
+  fabletools::forecast(h = "5 years")
+```
+
+```{r}
+forecast_test %>%
+  autoplot(train, level = NULL) +
+  autolayer(filter_index(bop_clean_ts, "2010" ~ .), colour = "black")+
+  ggtitle("Forecasts for UK BoP") +
+  xlab("Year") +
+  guides(colour = guide_legend(title = "Forecast"))
+```
+```{r}
+accuracy_model <- fabletools::accuracy(forecast_test, bop_clean_ts)
+
+accuracy_model %>% 
+  select(-.type) %>% 
+  arrange(RMSE)
+```
+

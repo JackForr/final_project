@@ -1,0 +1,21 @@
+"0","bop <- left_join(imports, exports) %>% "
+"0","  left_join(., bop) %>% "
+"0","  left_join(., capital_account) %>% "
+"0","  left_join(., financial_account) %>% "
+"0","  left_join(., bop_overview)"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"",
+""date"")[39m
+"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"",
+""date"", ""imports_pc_gdp"", ""log_imports_pc_gdp"", ""exports_pc_gdp"",
+""log_exports_pc_gdp"")[39m
+"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"",
+""date"", ""capital_account_balance"")[39m
+"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"",
+""date"", ""financial_account_balance"")[39m
+"
+"1","[38;5;232mJoining, by = c(""country_name"", ""country_code"", ""development_flag"",
+""date"")[39m
+"

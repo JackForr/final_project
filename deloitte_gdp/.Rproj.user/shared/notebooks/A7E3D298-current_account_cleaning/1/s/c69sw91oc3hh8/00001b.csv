@@ -1,0 +1,32 @@
+"0","imports <- imports %>% "
+"0","  group_by(country_name) %>% "
+"0","  mutate(imports_pc_gdp = coalesce("
+"0","    imports_pc_gdp, median(imports_pc_gdp, na.rm = TRUE)"
+"0","  ))"
+"0",""
+"0","imports <- imports %>% "
+"0","  mutate(log_imports_pc_gdp = log(imports_pc_gdp)) #log could be for models etc"
+"0",""
+"0","skim(imports)"
+"1","── Data Summary ────────────────────────
+"
+"1","                           Values      
+"
+"1","Name                       imports     
+"
+"1","Number of rows             1612        
+"
+"1","Number of columns          6           
+"
+"1","_______________________                
+"
+"1","Column type frequency:                 
+"
+"1","  character                3           
+"
+"1","  numeric                  2           
+"
+"1","________________________               
+"
+"1","Group variables            country_name
+"

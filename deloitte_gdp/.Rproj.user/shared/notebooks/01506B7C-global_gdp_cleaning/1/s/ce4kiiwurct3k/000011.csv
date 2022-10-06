@@ -1,0 +1,3 @@
+"0","#remove data before 1990"
+"0","gdp_pc <- gdp_pc %>% "
+"0","  select(-c(starts_with(""indicator_""), ""1960"":""1989""))"

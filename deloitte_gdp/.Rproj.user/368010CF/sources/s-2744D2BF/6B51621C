@@ -1,0 +1,28 @@
+{
+    "id": "6B51621C",
+    "path": "~/Documents/final_project/deloitte_gdp/bop_analysis.Rmd",
+    "project_path": "bop_analysis.Rmd",
+    "type": "r_markdown",
+    "hash": "1884180270",
+    "contents": "",
+    "dirty": true,
+    "created": 1664784808895.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "tempName": "Untitled1",
+        "chunk_output_type": "inline",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "139,0",
+        "scrollLine": "133"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1664985470,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1665049553822,
+    "read_only": false,
+    "read_only_alternatives": []
+}

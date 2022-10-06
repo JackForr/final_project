@@ -1,0 +1,5 @@
+"0","bop <- bop %>% "
+"0","  group_by(country_name) %>% "
+"0","  mutate(current_account_balance = coalesce("
+"0","    current_account_balance, median(current_account_balance, na.rm = TRUE)"
+"0","  ))"

@@ -1,0 +1,14 @@
+"0","bop_clean_ts <- bop_clean_ts %>% "
+"0","  filter(development_flag == ""UK"") %>% "
+"0","  select(date, balance_of_payments)"
+"1","[1m[33mError[39m in [38;5;232m`filter()`[39m:[22m
+[38;5;232m[33m![38;5;232m Problem while computing `..1 = development_flag == ""UK""`.[39m
+[1mCaused by error in [38;5;232m`mask$eval_all_filter()`[39m:[22m
+[33m![39m object 'development_flag' not found
+Backtrace:
+[90m 1. [39mbop_clean_ts %>% filter(development_flag == ""UK"") %>% ...
+[90m 4. [39m[38;5;232m[1m[94mdplyr:::filter.data.frame([38;5;232m[22m[39m., development_flag == ""UK""[38;5;232m[1m[94m)[38;5;232m[22m[39m
+[90m 5. [39mdplyr:::filter_rows(.data, ..., caller_env = caller_env())
+[90m 6. [39mdplyr:::filter_eval(dots, mask = mask, error_call = error_call)
+[90m 8. [39mmask$eval_all_filter(dots, env_filter)
+"

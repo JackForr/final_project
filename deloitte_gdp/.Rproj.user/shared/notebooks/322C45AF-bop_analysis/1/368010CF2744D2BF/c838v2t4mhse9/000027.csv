@@ -1,0 +1,8 @@
+"0","forecast_test %>%"
+"0","  autoplot(train, level = NULL) +"
+"0","  autolayer(filter_index(bop_clean_ts, ""2010"" ~ .), colour = ""black"")+"
+"0","  ggtitle(""Forecasts for UK BoP"") +"
+"0","  xlab(""Year"") +"
+"0","  guides(colour = guide_legend(title = ""Forecast""))"
+"1","Plot variable not specified, automatically selected `.vars = balance_of_payments`
+"

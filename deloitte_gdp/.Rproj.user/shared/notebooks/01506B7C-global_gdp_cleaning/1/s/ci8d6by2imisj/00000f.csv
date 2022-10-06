@@ -1,0 +1,32 @@
+"0","#investigate columns"
+"0","unique(gdp_growth_pc$indicator_name)"
+"1","[1]"
+"1"," ""GDP per capita growth (annual %)"""
+"1","
+"
+"0","unique(gdp_growth_pc$indicator_code)"
+"1","[1]"
+"1"," ""NY.GDP.PCAP.KD.ZG"""
+"1","
+"
+"0","skim(gdp_growth_pc)"
+"1","── Data Summary ────────────────────────
+"
+"1","                           Values       
+"
+"1","Name                       gdp_growth_pc
+"
+"1","Number of rows             266          
+"
+"1","Number of columns          66           
+"
+"1","_______________________                 
+"
+"1","Column type frequency:                  
+"
+"1","  character                66           
+"
+"1","________________________                
+"
+"1","Group variables            None         
+"

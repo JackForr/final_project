@@ -1,0 +1,2 @@
+"0","bop_overview <- bop_overview %>% "
+"0","  select(-c(starts_with(""indicator_""), `1960`))"
