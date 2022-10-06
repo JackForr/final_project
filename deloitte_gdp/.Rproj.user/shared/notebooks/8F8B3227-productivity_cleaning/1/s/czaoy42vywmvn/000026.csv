@@ -1,0 +1,5 @@
+"0","multifactor_prod <- multifactor_prod %>% "
+"0","  select(-c(indicator, subject, measure, frequency, flag_codes)) %>%"
+"0","  rename(multifactor_prod_agrwth = value) %>% "
+"0","  mutate(date = make_date(time)) %>% "
+"0","  select(-time)"

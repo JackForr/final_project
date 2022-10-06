@@ -1,0 +1,79 @@
+"0","trade_unions <- trade_unions %>% "
+"0","  filter(country %in% developed_countries) %>% "
+"0","  mutate(across(starts_with(""20""), as.numeric)) %>% "
+"0","  pivot_longer(""2000"":""2017"", "
+"0","               names_to = ""time"", "
+"0","               values_to = ""trade_union_density"") %>% "
+"0","  select(country, time, trade_union_density)"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `..1 = across(starts_with(""20""), as.numeric)`.
+[36mℹ[38;5;232m NAs introduced by coercion[39m
+"

@@ -3,9 +3,9 @@
     "path": "~/Documents/final_project/deloitte_gdp/productivity_cleaning.Rmd",
     "project_path": "productivity_cleaning.Rmd",
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "1137282719",
     "contents": "",
-    "dirty": true,
+    "dirty": false,
     "created": 1664809700996.0,
     "source_on_save": false,
     "relative_order": 4,
@@ -14,15 +14,15 @@
         "chunk_output_type": "inline",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "66,0",
-        "scrollLine": "65"
+        "cursorPosition": "152,15",
+        "scrollLine": "141"
     },
     "folds": "",
-    "lastKnownWriteTime": 1664985465,
+    "lastKnownWriteTime": 1665073023,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1665050994377,
+    "last_content_update": 1665073023696,
     "read_only": false,
     "read_only_alternatives": []
 }
