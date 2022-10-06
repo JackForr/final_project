@@ -63,6 +63,8 @@ capital_prod <- capital_prod %>%
   select(c(location, date, value)) %>% 
   rename(capital_services_pc_growth = value)
 ```
+###factors affecting productivity
+
 
 ###join and write to clean folder
 ```{r}

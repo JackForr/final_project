@@ -138,4 +138,4 @@ accuracy_model %>%
   select(-.type) %>% 
   arrange(RMSE)
 ```
-
+#mean model is the best, showing forecasting is no better than making a guess than the future = mean of the past
