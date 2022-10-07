@@ -1,0 +1,61 @@
+"0","library(relaimpo)
+"
+"2","Loading required package: MASS
+"
+"2","
+Attaching package: ‘MASS’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    select
+
+"
+"2","Loading required package: boot
+"
+"2","Loading required package: survey
+"
+"2","Loading required package: grid
+"
+"2","Loading required package: Matrix
+"
+"2","
+Attaching package: ‘Matrix’
+
+"
+"2","The following objects are masked from ‘package:tidyr’:
+
+    expand, pack, unpack
+
+"
+"2","Loading required package: survival
+"
+"2","
+Attaching package: ‘survival’
+
+"
+"2","The following object is masked from ‘package:boot’:
+
+    aml
+
+"
+"2","
+Attaching package: ‘survey’
+
+"
+"2","The following object is masked from ‘package:graphics’:
+
+    dotchart
+
+"
+"2","Loading required package: mitools
+"
+"2","This is the global version of package relaimpo.
+
+"
+"2","If you are a non-US user, a version with the interesting additional metric pmvd is available
+
+"
+"2","from Ulrike Groempings web site at prof.beuth-hochschule.de/groemping.
+
+"

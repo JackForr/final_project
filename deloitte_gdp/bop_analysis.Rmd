@@ -89,3 +89,53 @@ bop_clean_ts %>%
   facet_wrap(~development_flag)
 ```
 
+###training forecast
+```{r}
+library(fable)
+```
+
+```{r}
+bop_clean_ts <- bop_clean_ts %>% 
+  filter(development_flag == "UK") %>% 
+  select(date, balance_of_payments)
+
+bop_years <- bop_clean_ts %>%
+  distinct(date)%>%
+  arrange(desc(date))
+
+train <- bop_clean_ts %>%
+  filter_index("1961" ~ "2018")
+```
+
+```{r}
+fit_train <- train %>%
+  model(
+    naive = NAIVE(balance_of_payments),
+    mean_model = MEAN(balance_of_payments),
+    arima = ARIMA(balance_of_payments),
+    ets = ETS(balance_of_payments)
+  )
+```
+
+###testing forecasts
+```{r}
+forecast_test <- fit_train %>%
+  fabletools::forecast(h = "5 years")
+```
+
+```{r}
+forecast_test %>%
+  autoplot(train, level = NULL) +
+  autolayer(filter_index(bop_clean_ts, "2010" ~ .), colour = "black")+
+  ggtitle("Forecasts for UK BoP") +
+  xlab("Year") +
+  guides(colour = guide_legend(title = "Forecast"))
+```
+```{r}
+accuracy_model <- fabletools::accuracy(forecast_test, bop_clean_ts)
+
+accuracy_model %>% 
+  select(-.type) %>% 
+  arrange(RMSE)
+```
+#mean model is the best, showing forecasting is no better than making a guess than the future = mean of the past

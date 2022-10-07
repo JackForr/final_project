@@ -1,0 +1,2 @@
+"0","gdp_hr <- gdp_hr %>% "
+"0","  mutate(log_transport_investment_eur = log(transport_investment_eur))"

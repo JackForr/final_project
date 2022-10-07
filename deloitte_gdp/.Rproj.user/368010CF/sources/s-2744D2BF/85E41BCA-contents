@@ -44,10 +44,10 @@ multifactor_prod <- multifactor_prod %>%
 ###remove and rename rows
 ```{r}
 labour_prod  <- labour_prod %>% 
-  select(-c(indicator, subject, measure, frequency, flag_codes)) %>%
+  filter(measure == "USD") %>% 
   rename(gdp_hr_worked = value) %>% 
   mutate(date = make_date(time)) %>% 
-  select(-time)
+  select(-c(indicator, subject, measure, frequency, flag_codes, time))
 ```
 
 ```{r}

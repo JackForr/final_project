@@ -1,0 +1,28 @@
+{
+    "id": "85B67CDD",
+    "path": "~/Documents/final_project/deloitte_gdp/labour_productivity_modelling.Rmd",
+    "project_path": "labour_productivity_modelling.Rmd",
+    "type": "r_markdown",
+    "hash": "3987267048",
+    "contents": "",
+    "dirty": true,
+    "created": 1665170117381.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "tempName": "Untitled1",
+        "chunk_output_type": "inline",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "151,67",
+        "scrollLine": "150"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1665177422,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1665177564450,
+    "read_only": false,
+    "read_only_alternatives": []
+}

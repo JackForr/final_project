@@ -1,0 +1,3 @@
+"0","gdp_auto_model <- regsubsets(gdp_hr_worked ~.,"
+"0","                             data = gdp_hr, nvmax = 8,"
+"0","                             method = ""forward"")"

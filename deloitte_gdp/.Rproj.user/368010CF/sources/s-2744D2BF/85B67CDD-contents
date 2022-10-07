@@ -1,0 +1,152 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(leaps)
+library(modelr)
+library(GGally)
+```
+```{r}
+productivity <- read_csv("clean_data/productivity_factors.csv")
+```
+
+```{r}
+gdp_hr <- productivity_factors %>% 
+  select(-c(multifactor_prod_agrwth,capital_services_pc_growth, location, date)) %>% 
+  mutate(across(where(is.character), as.numeric))
+```
+```{r}
+gdp_hr %>% 
+  ggpairs()
+
+ggsave("gdp_hr.png", height = 15, width = 15)
+```
+
+```{r}
+gdp_auto_model <- regsubsets(gdp_hr_worked ~.,
+                             data = gdp_hr, nvmax = 8,
+                             method = "forward")
+```
+
+```{r}
+sum_gdp_auto <- summary(gdp_auto_model)
+```
+```{r}
+plot(gdp_auto_model, scale = "adjr2")
+plot(sum_gdp_auto$rsq, type = "b")
+```
+```{r}
+plot(gdp_auto_model, scale = "bic")
+plot(sum_gdp_auto$bic, type = "b")
+```
+#6 predictor model has the lowets bic score so we'll use that
+
+```{r}
+summary(gdp_auto_model)$which[6,]
+```
+```{r}
+best_model <- lm(gdp_hr_worked ~ avg_wage + trade_union_density + 
+                   int_trade_pc_gdp + transport_investment_eur +
+                   r_and_d_spending_pc + flexible_work_pc, data = gdp_hr)
+```
+```{r}
+plot(best_model)
+```
+
+###transform variables to fix diagnostic plots
+```{r}
+gdp_hr %>% 
+  ggplot(aes(x = int_trade_pc_gdp))+
+  geom_histogram()
+```
+```{r}
+gdp_hr <- gdp_hr %>% 
+  mutate(log_int_trade_pc_gdp = log(int_trade_pc_gdp))
+```
+
+```{r}
+gdp_hr %>% 
+  ggplot(aes(x = log_int_trade_pc_gdp))+
+  geom_histogram()
+```
+
+```{r}
+gdp_hr
+gdp_hr %>% 
+  ggplot(aes(x = transport_investment_eur))+
+  geom_histogram()
+```
+```{r}
+gdp_hr <- gdp_hr %>% 
+  mutate(log_transport_investment_eur = log(transport_investment_eur))
+```
+
+```{r}
+gdp_hr %>% 
+  ggplot(aes(x = log_transport_investment_eur))+
+  geom_histogram()
+```
+
+###try model with new variables 
+```{r}
+transformed_best_model <- lm(gdp_hr_worked ~ avg_wage + trade_union_density + 
+                   log_int_trade_pc_gdp + log_transport_investment_eur +
+                   r_and_d_spending_pc + flexible_work_pc, data = gdp_hr)
+```
+
+```{r}
+plot(transformed_best_model)
+```
+
+###try use glmulti to utilise interactions 
+```{r}
+library(glmulti)
+```
+
+```{r}
+gdp_hr <- gdp_hr%>%
+  select(-c(int_trade_pc_gdp, transport_investment_eur))
+```
+
+```{r}
+glmulti_fit <- glmulti(
+  gdp_hr_worked ~ ., 
+  data = gdp_hr,
+  level = 2, 
+  minsize = 0,
+  maxsize = -1,
+  marginality = TRUE,
+  method = "g",
+  crit = bic, 
+  plotty = FALSE,
+  report = TRUE,
+  confsetsize = 100,
+  fitfunction = lm 
+)
+```
+
+```{r}
+glmulti_model <- lm(gdp_hr_worked~1+adult_education_pc+avg_wage+trade_union_density+unemployment_pc+r_and_d_spending_pc+flexible_work_pc+log_int_trade_pc_gdp+log_transport_investment_eur+trade_union_density:adult_education_pc+unemployment_pc:trade_union_density+r_and_d_spending_pc:trade_union_density+r_and_d_spending_pc:unemployment_pc+flexible_work_pc:adult_education_pc+flexible_work_pc:avg_wage+flexible_work_pc:unemployment_pc+log_int_trade_pc_gdp:adult_education_pc+log_int_trade_pc_gdp:avg_wage+log_int_trade_pc_gdp:trade_union_density+log_int_trade_pc_gdp:unemployment_pc+log_int_trade_pc_gdp:r_and_d_spending_pc+log_transport_investment_eur:avg_wage+log_transport_investment_eur:unemployment_pc+log_transport_investment_eur:r_and_d_spending_pc+log_transport_investment_eur:flexible_work_pc, data = gdp_hr)
+```
+
+```{r}
+summary(glmulti_model)
+```
+
+```{r}
+plot(glmulti_model)
+```
+```{r}
+library(relaimpo)
+```
+```{r}
+basic_model <- lm(gdp_hr_worked~1+adult_education_pc+avg_wage+trade_union_density+unemployment_pc+r_and_d_spending_pc+flexible_work_pc+log_int_trade_pc_gdp+log_transport_investment_eur, data = gdp_hr)
+```
+
+```{r}
+calc.relimp(basic_model, type = "lmg", rela = TRUE)
+```
+
+#avg wage, trade union density and flexible work are most important

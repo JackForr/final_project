@@ -1,0 +1,30 @@
+"0","labour_prod <- read_csv(""raw_data/labour_prod.csv"") %>% "
+"0","  clean_names()"
+"1","[1mRows: [22m[34m3402[39m [1mColumns: [22m[34m8[39m
+"
+"1","[36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (6): LOCATION, INDICATOR, SUBJECT, MEASURE, FREQUENCY, Flag Codes
+[32mdbl[39m (2): TIME, Value
+"
+"1","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","multifactor_prod <- read_excel(""raw_data/multifactor_prod.xls"") %>% "
+"0","  clean_names()"
+"0",""
+"0","capital_prod <- read_csv(""raw_data/capital_productivity.csv"") %>% "
+"0","  clean_names()"
+"1","[1mRows: [22m[34m4199[39m [1mColumns: [22m[34m17[39m
+"
+"1","[36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (9): LOCATION, Country, SUBJECT, Subject, MEASURE, Measure, Unit Code, Unit, Pow...
+[32mdbl[39m (4): TIME, Time, PowerCode Code, Value
+[33mlgl[39m (4): Reference Period Code, Reference Period, Flag Codes, Flags
+"
+"1","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"

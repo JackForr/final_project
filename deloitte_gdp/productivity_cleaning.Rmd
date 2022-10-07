@@ -19,6 +19,7 @@ multifactor_prod <- read_excel("raw_data/multifactor_prod.xls") %>%
 capital_prod <- read_csv("raw_data/capital_productivity.csv") %>% 
   clean_names()
 ```
+
 ###filter so that we're using the same countries as other datasets
 ```{r}
 bop_clean <- read_csv("clean_data/bop_clean.csv")
@@ -122,7 +123,8 @@ tertiary_spending <- tertiary_spending %>%
   filter(location %in% developed_codes) %>% 
   select(location, time, value) %>% 
   rename(education_spending_pc = value) %>% 
-  mutate(date = make_date(time)) %>% 
+  mutate(date = make_date(time)) %>%
+  complete(date = seq.Date(min(date), max(date), by = "year")) %>% 
   select(-time)
 ```
 
@@ -142,8 +144,12 @@ r_d_spending <- r_d_spending %>%
                values_to = "r_and_d_spending_pc") %>% 
   select(time, country_code, r_and_d_spending_pc) %>% 
    mutate(date = make_date(time)) %>% 
-  select(-time)
+  select(-time) %>% 
+  filter(date >= "1970-01-01" & date <= "2017-01-01") %>% 
+  rename("location" = "country_code")
 ```
+
+
 ```{r}
 trade_unions <- trade_unions %>% 
   filter(country %in% developed_countries |
@@ -154,8 +160,15 @@ trade_unions <- trade_unions %>%
                values_to = "trade_union_density") %>% 
   select(country, time, trade_union_density) %>% 
    mutate(date = make_date(time)) %>% 
-  select(-time)
+  select(-time) 
 ```
+```{r}
+trade_unions <- trade_unions %>% 
+  mutate("location" = countrycode::countryname(country, "iso3c")) %>% 
+  select(-country)
+```
+
+
 
 ```{r}
 wages <- wages %>% 
@@ -173,19 +186,25 @@ unique(tech_adoption$variable)
 tech_adoption <- tech_adoption %>% 
   pivot_longer("Australia":"United States", names_to = "country", 
                values_to = "industrial_robots") %>% 
-  filter(Variable == "industrial robots" & country %in% developed_countries |
-           country == "United Kingdom") %>% 
+  filter(Variable == "industrial robots",
+         country %in% developed_countries)%>% 
   replace(is.na(.), 0) %>% 
   clean_names() %>% 
    mutate(date = make_date(year)) %>% 
   select(-year)
 ```
+
 ```{r}
 unemployment <- unemployment %>% 
   filter(country_code %in% developed_codes) %>% 
   pivot_longer("1960":"2021", names_to = "date", values_to = "unemployment_pc") %>% 
   select(country_code, date, unemployment_pc) %>% 
-   mutate(date = make_date(date))
+   mutate(date = make_date(date)) %>% 
+  filter(date >= "1970-01-01" & date <= "2017-01-01") %>% 
+  rename("location" = "country_code")
+```
+```{r}
+unique(unemployment$indicator_code)
 ```
 
 ```{r}
@@ -194,13 +213,15 @@ business_ease <- business_ease %>%
   select(economy, global_rank) %>% 
   rename("ease_of_business_rank" = "global_rank" )
 
-business_ease <- data.frame("date" = "2018", business_ease) %>% 
+business_ease <- data.frame("date" = "2017", business_ease) %>% 
    mutate(date = make_date(date)) %>% 
   mutate(ease_of_business_rank = as.factor(ease_of_business_rank))
 ```
+
 ```{r}
 openness <- openness %>% 
-  filter(location %in% developed_codes) %>% 
+  filter(location %in% developed_codes,
+         subject == "NTRADE") %>% 
   select(location, time, value) %>% 
   rename("int_trade_pc_gdp" = "value") %>% 
    mutate(date = make_date(time)) %>% 
@@ -216,24 +237,37 @@ competitiveness <- competitiveness %>%
            country == "United Kingdom") %>% 
   select(Edition, country, competitiveness_index) %>% 
   rename("date" = "Edition") %>% 
-   mutate(date = make_date(date))
+   mutate(date = make_date(time)) %>% 
+  select(-time)
+```
+```{r}
+flexible_working <- flexible_working %>% 
+  filter(country_code %in% developed_codes) %>% 
+  pivot_longer("1960":"2021", names_to = "date", values_to = "flexible_work_pc") %>% 
+  select(date, country_code, flexible_work_pc) %>% 
+  rename("location" = "country_code") %>% 
+  mutate(date = make_date(date)) %>% 
+  filter(date >= "1970-01-01" & date <= "2017-01-01")
 ```
 
 
 ###join and write to clean folder
 ```{r}
-productivity <- left_join(labour_prod, multifactor_prod) %>% 
+productivity_factors <- left_join(labour_prod, multifactor_prod) %>% 
   left_join(., capital_prod) %>% 
-  left_join(., adult_education)
-```
-```{r}
-dfs = list(
-  labour_prod, multifactor_prod, capital_prod, adult_education
-)
+  left_join(., adult_education) %>% 
+  left_join(., wages) %>% 
+  left_join(., trade_unions) %>% 
+  left_join(., openness) %>% 
+  left_join(., infastructure_spending) %>% 
+  left_join(., adult_education) %>% 
+  left_join(., unemployment) %>% 
+  left_join(., r_d_spending) %>% 
+  left_join(., flexible_working)
 
-purrr::reduce(dfs, left_join)
+productivity <- left_join(labour_prod, multifactor_prod) %>% 
+  left_join(., capital_prod) 
 ```
-
 
 ```{r}
 productivity <- productivity %>% 
@@ -243,6 +277,9 @@ productivity <- productivity %>%
   ))
 
 unique(productivity$development_flag)
+```
+```{r}
+write_csv(productivity_factors, "productivity_factors.csv")
 ```
 
 

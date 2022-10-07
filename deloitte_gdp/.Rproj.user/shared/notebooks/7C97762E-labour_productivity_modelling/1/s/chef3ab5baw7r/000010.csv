@@ -1,0 +1,2 @@
+"0","gdp_hr <- gdp_hr%>%"
+"0","  select(-c(int_trade_pc_gdp, transport_investment_eur))"

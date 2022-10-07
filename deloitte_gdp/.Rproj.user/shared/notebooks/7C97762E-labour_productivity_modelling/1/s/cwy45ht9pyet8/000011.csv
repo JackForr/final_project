@@ -1,0 +1,1 @@
+"0","basic_model <- lm(gdp_hr_worked~1+adult_education_pc+avg_wage+trade_union_density+unemployment_pc+r_and_d_spending_pc+flexible_work_pc+log_int_trade_pc_gdp+log_transport_investment_eur, data = gdp_hr)"
