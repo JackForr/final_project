@@ -149,4 +149,4 @@ basic_model <- lm(gdp_hr_worked~1+adult_education_pc+avg_wage+trade_union_densit
 calc.relimp(basic_model, type = "lmg", rela = TRUE)
 ```
 
-#avg wage, trade union density and flexible work are most important 
+#avg wage, trade union density and flexible work are most important

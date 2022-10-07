@@ -1,7 +1,0 @@
-"0","capital_prod <- capital_prod %>% "
-"0","  filter(location != omit & subject_2 == ""Total capital services"")"
-"2","Warning in location != omit :"
-"2","
- "
-"2"," longer object length is not a multiple of shorter object length
-"
