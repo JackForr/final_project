@@ -1,0 +1,3 @@
+"0","trade_unions <- trade_unions %>% "
+"0","  mutate(""location"" = countrycode::countryname(country, ""iso3c"")) %>% "
+"0","  select(-country)"

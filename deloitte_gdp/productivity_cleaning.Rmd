@@ -95,19 +95,35 @@ wages <- read_excel("raw_data/wages.xlsx") %>%
 
 tech_adoption <- read_excel("raw_data/tech_adoption.xls", sheet = 5)
 
-unemployment <- read_excel("raw_data/")
+unemployment <- read_excel("raw_data/unemployment.xls") %>% 
+    row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+
+business_ease <- read_excel("raw_data/ease_of_business.xlsx") %>% 
+  clean_names()
+
+openness <- read_excel("raw_data/economic_openness.xlsx") %>% 
+  clean_names()
+
+competitiveness <- read_excel("raw_data/competitiveness_index.xlsx", sheet = 2) %>% 
+  row_to_names(row_number = 3) 
 ```
 
 ```{r}
 adult_education <- adult_education %>% 
   filter(location %in% developed_codes) %>% 
   select(location, time, value) %>% 
-  rename(adult_education_pc = value)
+  rename(adult_education_pc = value) %>% 
+  mutate(date = make_date(time)) %>% 
+  select(-time)
 
 tertiary_spending <- tertiary_spending %>% 
   filter(location %in% developed_codes) %>% 
   select(location, time, value) %>% 
-  rename(education_spending_pc = value)
+  rename(education_spending_pc = value) %>% 
+  mutate(date = make_date(time)) %>% 
+  select(-time)
 ```
 
 ```{r}
@@ -115,30 +131,39 @@ infastructure_spending <- infastructure_spending %>%
   filter(location %in% developed_codes & subject %in% c("ROAD", "RAIL")) %>%
   pivot_wider(values_from = value, names_from = subject) %>% 
   mutate(transport_investment_eur = `RAIL` + `ROAD`) %>% 
-  select(location, time, transport_investment_eur)
+  select(location, time, transport_investment_eur) %>% 
+   mutate(date = make_date(time)) %>% 
+  select(-time)
 ```
 ```{r}
 r_d_spending <- r_d_spending %>% 
   filter(country_code %in% developed_codes) %>% 
   pivot_longer("1960":"2021", names_to = "time", 
                values_to = "r_and_d_spending_pc") %>% 
-  select(time, country_code, r_and_d_spending_pc)
+  select(time, country_code, r_and_d_spending_pc) %>% 
+   mutate(date = make_date(time)) %>% 
+  select(-time)
 ```
 ```{r}
 trade_unions <- trade_unions %>% 
-  filter(country %in% developed_countries) %>% 
+  filter(country %in% developed_countries |
+           country == "United Kingdom") %>% 
   mutate(across(starts_with("20"), as.numeric)) %>% 
   pivot_longer("2000":"2017", 
                names_to = "time", 
                values_to = "trade_union_density") %>% 
-  select(country, time, trade_union_density)
+  select(country, time, trade_union_density) %>% 
+   mutate(date = make_date(time)) %>% 
+  select(-time)
 ```
 
 ```{r}
 wages <- wages %>% 
   filter(location %in% developed_codes) %>% 
   select(location, time, value) %>% 
-  rename("avg_wage" = "value")
+  rename("avg_wage" = "value") %>% 
+   mutate(date = make_date(time)) %>% 
+  select(-time)
 ```
 
 ```{r}
@@ -148,17 +173,67 @@ unique(tech_adoption$variable)
 tech_adoption <- tech_adoption %>% 
   pivot_longer("Australia":"United States", names_to = "country", 
                values_to = "industrial_robots") %>% 
-  filter(Variable == "industrial robots" & country %in% developed_countries) %>% 
+  filter(Variable == "industrial robots" & country %in% developed_countries |
+           country == "United Kingdom") %>% 
   replace(is.na(.), 0) %>% 
-  clean_names()
+  clean_names() %>% 
+   mutate(date = make_date(year)) %>% 
+  select(-year)
+```
+```{r}
+unemployment <- unemployment %>% 
+  filter(country_code %in% developed_codes) %>% 
+  pivot_longer("1960":"2021", names_to = "date", values_to = "unemployment_pc") %>% 
+  select(country_code, date, unemployment_pc) %>% 
+   mutate(date = make_date(date))
+```
+
+```{r}
+business_ease <- business_ease %>% 
+  filter(economy %in% developed_countries | economy == "United Kingdom") %>% 
+  select(economy, global_rank) %>% 
+  rename("ease_of_business_rank" = "global_rank" )
+
+business_ease <- data.frame("date" = "2018", business_ease) %>% 
+   mutate(date = make_date(date)) %>% 
+  mutate(ease_of_business_rank = as.factor(ease_of_business_rank))
+```
+```{r}
+openness <- openness %>% 
+  filter(location %in% developed_codes) %>% 
+  select(location, time, value) %>% 
+  rename("int_trade_pc_gdp" = "value") %>% 
+   mutate(date = make_date(time)) %>% 
+  select(-time)
+```
+```{r}
+competitiveness <- competitiveness %>% 
+  filter(Attribute == "SCORE" & Edition == "2018" & 
+           `Series name` == "Global Competitiveness Index 4.0") %>% 
+  pivot_longer("Angola":"South Asia", names_to = "country",
+               values_to = "competitiveness_index") %>% 
+  filter(country %in% developed_countries |
+           country == "United Kingdom") %>% 
+  select(Edition, country, competitiveness_index) %>% 
+  rename("date" = "Edition") %>% 
+   mutate(date = make_date(date))
 ```
 
 
 ###join and write to clean folder
 ```{r}
 productivity <- left_join(labour_prod, multifactor_prod) %>% 
-  left_join(., capital_prod)
+  left_join(., capital_prod) %>% 
+  left_join(., adult_education)
 ```
+```{r}
+dfs = list(
+  labour_prod, multifactor_prod, capital_prod, adult_education
+)
+
+purrr::reduce(dfs, left_join)
+```
+
 
 ```{r}
 productivity <- productivity %>% 

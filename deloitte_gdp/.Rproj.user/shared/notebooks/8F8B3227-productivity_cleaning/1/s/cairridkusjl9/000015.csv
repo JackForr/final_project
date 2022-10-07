@@ -1,4 +1,6 @@
 "0","wages <- wages %>% "
 "0","  filter(location %in% developed_codes) %>% "
 "0","  select(location, time, value) %>% "
-"0","  rename(""avg_wage"" = ""value"")"
+"0","  rename(""avg_wage"" = ""value"") %>% "
+"0","   mutate(date = make_date(time)) %>% "
+"0","  select(-time)"

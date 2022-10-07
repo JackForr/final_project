@@ -1,0 +1,7 @@
+"0","unemployment <- unemployment %>% "
+"0","  filter(country_code %in% developed_codes) %>% "
+"0","  pivot_longer(""1960"":""2021"", names_to = ""date"", values_to = ""unemployment_pc"") %>% "
+"0","  select(country_code, date, unemployment_pc) %>% "
+"0","   mutate(date = make_date(date)) %>% "
+"0","  filter(date >= ""1970-01-01"" & date <= ""2017-01-01"") %>% "
+"0","  rename(""location"" = ""country_code"")"

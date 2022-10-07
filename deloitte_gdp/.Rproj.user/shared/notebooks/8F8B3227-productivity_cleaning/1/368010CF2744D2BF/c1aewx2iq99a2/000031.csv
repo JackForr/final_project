@@ -1,0 +1,7 @@
+"0","data.frame(""date"" = ""2017"", business_ease) %>% 
+   mutate(date = make_date(date)) %>% 
+  complete(date = seq.Date(1960-01-01, 2017-01-01, by = ""year""))
+"
+"2","Error in seq.Date(1960 - 1 - 1, 2017 - 1 - 1, by = ""year"") : 
+  'from' must be a ""Date"" object
+"

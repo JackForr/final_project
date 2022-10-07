@@ -3,7 +3,7 @@
     "path": "~/Documents/final_project/deloitte_gdp/productivity_analysis.Rmd",
     "project_path": "productivity_analysis.Rmd",
     "type": "r_markdown",
-    "hash": "1397759726",
+    "hash": "0",
     "contents": "",
     "dirty": true,
     "created": 1664812301979.0,
@@ -14,8 +14,8 @@
         "chunk_output_type": "inline",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "12,55",
-        "scrollLine": "8"
+        "cursorPosition": "36,13",
+        "scrollLine": "35"
     },
     "folds": "",
     "lastKnownWriteTime": 1664985479,

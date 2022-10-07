@@ -1,0 +1,4 @@
+"0","capital_prod <- capital_prod %>% "
+"0","  mutate(date = make_date(time)) %>% "
+"0","  select(c(location, date, value)) %>% "
+"0","  rename(capital_services_pc_growth = value)"
