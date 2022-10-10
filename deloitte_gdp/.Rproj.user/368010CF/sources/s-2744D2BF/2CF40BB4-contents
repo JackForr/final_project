@@ -24,17 +24,74 @@ productivity_ts <- productivity %>%
 
 ###GDP/hr worked vs RoW
 ```{r}
+library(ggrepel)
+
 productivity_ts %>% 
   group_by(development_flag) %>% 
+  mutate(label = if_else(date == max(date), as.character(development_flag), NA_character_)) %>% 
   ggplot(aes(x = date, y = gdp_hr_worked, colour = development_flag))+
-  geom_line()
+  geom_line()+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  geom_label_repel(aes(label = label),
+                   nudge_x = 5, 
+                   na.rm = TRUE)+
+  labs(title = "Labour Productivity - GDP/hr worked",
+       x = "Date",
+       y = "GDP/hr Worked")
 ```
+
+
+
+###labour productivity annual change
+```{r}
+productivity_growth <- read_excel("raw_data/labour_annual_growth.xls") %>% 
+  filter(str_detect(`Title`, "Q")) %>% 
+  rename("date" = "Title", 
+         "prod_annual_growth" = "UK Whole Economy: Output per hour worked % change per annum SA") %>% 
+  mutate(date = yq(date),
+         prod_annual_growth = as.numeric(prod_annual_growth),
+         rolling_avg = slider::slide_dbl(
+           prod_annual_growth, mean, .before = 12, .after = 0))
+```
+
+```{r}
+productivity_growth <- as_tsibble(productivity_growth)
+```
+
+```{r}
+productivity_growth %>% 
+  ggplot()+
+  geom_col(aes(x = date, 
+             y = prod_annual_growth, width = 40), fill = "steelblue")+
+  geom_line(aes(x = date,
+                y = rolling_avg), colour = "red", linetype = "dashed")+
+  geom_vline(xintercept = as.numeric(productivity_growth$date[145]), linetype = 1, colour = "red")+
+  annotate("text", x = productivity_growth$date[140], 
+           y = 5, label = "2008 GFC", angle = 90, colour = "red")+
+  labs(title = "Labour Productivity - % annual change",
+       x = "Date",
+       y = "GDP/hr Worked - % annual change")+
+  theme_minimal()
+
+?theme
+```
+
 
 ###TFP vs Row
 ```{r}
 productivity_ts %>% 
-  ggplot(aes(x = date, y = multifactor_prod_agrwth, colour = development_flag))+
-  geom_line()
+  mutate(rolling_avg_tfp = slider::slide_dbl(
+           multifactor_prod_agrwth, mean, .before = 4, .after = 0)) %>% 
+  filter(date > "1984-01-01") %>% 
+  ggplot()+
+  geom_col(aes(x = date, y = multifactor_prod_agrwth), fill = "steelblue")+
+  geom_line(aes(x = date, y = rolling_avg_tfp), colour = "red", linetype = "dashed")+
+  facet_wrap(~development_flag, nrow = 2)+
+  theme_minimal()+
+  labs(title = "Total Factor Productivty - % annual change",
+       x = "Date",
+       y = "TFP - % annual change")
 ```
 
 ###capital productivity 
@@ -43,4 +100,32 @@ productivity_ts %>%
   ggplot(aes(x = date, y = capital_services_pc_growth, colour = development_flag))+
   geom_line()
 ```
+
+```{r}
+productivity_factors <- read_csv("clean_data/productivity_factors.csv")
+```
+
+```{r}
+productivity_factors %>% 
+  filter(date > "2008-01-01") %>% 
+  group_by(location) %>% 
+  summarise(mean_investment = mean(r_and_d_spending_pc, na.rm = TRUE)) %>% 
+  arrange(desc(mean_investment))
+```
+```{r}
+productivity_factors %>% 
+  filter(date > "2008-01-01") %>% 
+  group_by(location) %>% 
+  mutate(vocational_pupils_prop = vocational_pupils / population) %>% 
+  summarise(mean_vocation_pupil_prop = mean(vocational_pupils_prop, na.rm = TRUE)) %>%
+  arrange(desc(mean_vocation_pupil_prop))
+```
+```{r}
+productivity_factors %>% 
+  filter(date > "2008-01-01") %>% 
+  group_by(location) %>% 
+  summarise(mean_flexible = mean(flexible_work_pc, na.rm = TRUE)) %>%
+  arrange(desc(mean_flexible))
+```
+
 

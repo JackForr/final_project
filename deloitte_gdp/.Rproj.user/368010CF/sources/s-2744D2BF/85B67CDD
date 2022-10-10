@@ -3,7 +3,7 @@
     "path": "~/Documents/final_project/deloitte_gdp/labour_productivity_modelling.Rmd",
     "project_path": "labour_productivity_modelling.Rmd",
     "type": "r_markdown",
-    "hash": "3987267048",
+    "hash": "1584631683",
     "contents": "",
     "dirty": false,
     "created": 1665170117381.0,
@@ -14,15 +14,15 @@
         "chunk_output_type": "inline",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "151,67",
-        "scrollLine": "150"
+        "cursorPosition": "128,0",
+        "scrollLine": "119"
     },
     "folds": "",
-    "lastKnownWriteTime": 1665177839,
+    "lastKnownWriteTime": 1665226179,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1665177839509,
+    "last_content_update": 1665314479427,
     "read_only": false,
     "read_only_alternatives": []
 }

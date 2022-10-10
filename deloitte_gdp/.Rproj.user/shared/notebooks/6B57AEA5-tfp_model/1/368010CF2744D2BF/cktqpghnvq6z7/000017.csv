@@ -1,0 +1,7 @@
+"0","library(relaimpo)"
+"0","calc.relimp(basic_model, type = ""lmg"", rela = TRUE)"
+"2","Error in calc.relimp.default.intern(object = list(multifactor_prod_agrwth = c(1.313304,  : 
+  covg must be 
+ a positive definite covariance matrix 
+ or a data matrix / data frame with linearly independent columns.
+"

@@ -1,0 +1,8 @@
+"0","productivity_growth <- read_excel(""raw_data/labour_annual_growth.xls"") %>% "
+"0","  filter(str_detect(`Title`, ""Q"")) %>% "
+"0","  rename(""date"" = ""Title"", "
+"0","         ""prod_annual_growth"" = ""UK Whole Economy: Output per hour worked % change per annum SA"") %>% "
+"0","  mutate(date = yq(date),"
+"0","         prod_annual_growth = as.numeric(prod_annual_growth),"
+"0","         rolling_avg = slider::slide_dbl("
+"0","           prod_annual_growth, mean, .before = 12, .after = 0))"

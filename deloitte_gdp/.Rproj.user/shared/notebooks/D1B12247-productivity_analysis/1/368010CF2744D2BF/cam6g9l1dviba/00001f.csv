@@ -1,0 +1,5 @@
+"0","productivity_factors %>% "
+"0","  filter(date > ""2008-01-01"") %>% "
+"0","  group_by(location) %>% "
+"0","  summarise(mean_investment = mean(r_and_d_spending_pc, na.rm = TRUE)) %>% "
+"0","  arrange(desc(mean_investment))"

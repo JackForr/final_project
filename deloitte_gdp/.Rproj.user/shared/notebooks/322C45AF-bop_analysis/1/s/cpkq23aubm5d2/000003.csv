@@ -1,0 +1,5 @@
+"0","bop_clean_ts %>% "
+"0","  group_by(development_flag) %>% "
+"0","  ggplot(aes(x = date,"
+"0","             y = financial_account_balance, colour = development_flag))+"
+"0","  geom_line()"

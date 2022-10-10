@@ -3,9 +3,9 @@
     "path": "~/Documents/final_project/deloitte_gdp/productivity_analysis.Rmd",
     "project_path": "productivity_analysis.Rmd",
     "type": "r_markdown",
-    "hash": "1397759726",
+    "hash": "3392719708",
     "contents": "",
-    "dirty": false,
+    "dirty": true,
     "created": 1664812301979.0,
     "source_on_save": false,
     "relative_order": 6,
@@ -14,15 +14,15 @@
         "chunk_output_type": "inline",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "29,13",
-        "scrollLine": "23"
+        "cursorPosition": "124,2",
+        "scrollLine": "122"
     },
     "folds": "",
-    "lastKnownWriteTime": 1665177835,
+    "lastKnownWriteTime": 1665254691,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1665177835675,
+    "last_content_update": 1665336314405,
     "read_only": false,
     "read_only_alternatives": []
 }

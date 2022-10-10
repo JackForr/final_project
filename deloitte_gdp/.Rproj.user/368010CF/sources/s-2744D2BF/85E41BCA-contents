@@ -250,6 +250,37 @@ flexible_working <- flexible_working %>%
   filter(date >= "1970-01-01" & date <= "2017-01-01")
 ```
 
+```{r}
+vocational_edu <- read_excel("raw_data/vocational_edu.xls") %>% 
+  row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+```
+```{r}
+vocational_edu <- vocational_edu %>% 
+  filter(country_code %in% developed_codes) %>% 
+  pivot_longer("1960":"2021", names_to = "date", values_to = "vocational_pupils") %>% 
+  dplyr::select(date, country_code, vocational_pupils) %>% 
+  rename("location" = "country_code") %>% 
+  mutate(date = make_date(date)) %>% 
+  filter(date >= "1970-01-01" & date <= "2017-01-01")
+  
+```
+```{r}
+population <- read_excel("raw_data/population.xls") %>% 
+  row_to_names(row_number = 3) %>% 
+  clean_names() %>% 
+  rename_all(~stringr::str_replace_all(.,"x", "" ))
+```
+```{r}
+population <- population %>% 
+  filter(country_code %in% developed_codes) %>% 
+  pivot_longer("1960":"2021", names_to = "date", values_to = "population") %>% 
+  dplyr::select(date, country_code, population) %>% 
+  rename("location" = "country_code") %>% 
+  mutate(date = make_date(date)) %>% 
+  filter(date >= "1970-01-01" & date <= "2017-01-01")
+```
 
 ###join and write to clean folder
 ```{r}
@@ -263,7 +294,9 @@ productivity_factors <- left_join(labour_prod, multifactor_prod) %>%
   left_join(., adult_education) %>% 
   left_join(., unemployment) %>% 
   left_join(., r_d_spending) %>% 
-  left_join(., flexible_working)
+  left_join(., flexible_working) %>% 
+  left_join(., vocational_edu) %>% 
+  left_join(., population)
 
 productivity <- left_join(labour_prod, multifactor_prod) %>% 
   left_join(., capital_prod) 

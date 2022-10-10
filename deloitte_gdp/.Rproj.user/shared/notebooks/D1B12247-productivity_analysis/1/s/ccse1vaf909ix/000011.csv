@@ -1,4 +1,0 @@
-"0","productivity_ts %>% "
-"0","  group_by(development_flag) %>% "
-"0","  ggplot(aes(x = date, y = gdp_hr_worked, colour = development_flag))+"
-"0","  geom_line()"

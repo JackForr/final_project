@@ -1,0 +1,3 @@
+"0","bop_clean_ts <- bop_clean_ts %>% "
+"0","  group_by(development_flag) %>% "
+"0","  summarise(across(imports_pc_gdp:balance_of_payments, ~mean(.x, na.rm = TRUE)))"

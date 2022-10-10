@@ -1,2 +1,5 @@
 "0","gdp_hr <- gdp_hr%>%"
 "0","  select(-c(int_trade_pc_gdp, transport_investment_eur))"
+"2","Error in select(., -c(int_trade_pc_gdp, transport_investment_eur)) : 
+  unused argument (-c(int_trade_pc_gdp, transport_investment_eur))
+"

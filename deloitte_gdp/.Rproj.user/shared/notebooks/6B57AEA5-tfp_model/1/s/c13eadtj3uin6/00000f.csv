@@ -1,0 +1,8 @@
+"0","tfp_growth <- tfp_growth %>% 
+  mutate(log_transport_investment_eur = log(transport_investment_eur),
+         log_int_trade_pc_gdp = log(int_trade_pc_gdp))
+"
+"2","Warning:"
+"2"," [38;5;232mProblem while computing `log_int_trade_pc_gdp = log(int_trade_pc_gdp)`.
+[36mℹ[38;5;232m NaNs produced[39m
+"

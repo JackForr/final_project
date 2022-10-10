@@ -1,5 +1,4 @@
-"0","summary(gdp_auto_model)$which[6,]
-"
+"0","summary(gdp_auto_model)$which[6,]"
 "1","             (Intercept) "
 "1","      adult_education_pc "
 "1","                avg_wage "

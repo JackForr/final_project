@@ -20,7 +20,7 @@ bop_clean <- bop_clean %>%
 #create tibble object
 ```{r}
 bop_clean_ts <- bop_clean %>% 
-  select(-country_code) %>% 
+  dplyr::select(-country_code) %>% 
   as_tsibble(index = date,
              key = c(country_name))
 ```

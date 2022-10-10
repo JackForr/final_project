@@ -1,0 +1,6 @@
+"0","productivity_factors %>% "
+"0","  filter(date > ""2008-01-01"") %>% "
+"0","  group_by(location) %>% "
+"0","  mutate(vocational_pupils_prop = vocational_pupils / population) %>% "
+"0","  summarise(mean_vocation_pupil_prop = mean(vocational_pupils_prop, na.rm = TRUE)) %>%"
+"0","  arrange(desc(mean_vocation_pupil_prop))"

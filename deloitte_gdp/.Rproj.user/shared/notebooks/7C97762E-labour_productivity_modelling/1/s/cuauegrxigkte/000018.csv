@@ -1,0 +1,3 @@
+"0","best_model <- lm(gdp_hr_worked ~ avg_wage + trade_union_density + "
+"0","                   int_trade_pc_gdp + transport_investment_eur +"
+"0","                   r_and_d_spending_pc + flexible_work_pc, data = gdp_hr)"

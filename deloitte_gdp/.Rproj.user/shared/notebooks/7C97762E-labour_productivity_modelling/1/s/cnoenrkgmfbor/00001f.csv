@@ -1,3 +1,0 @@
-"0","gdp_hr <- productivity_factors %>% "
-"0","  select(-c(multifactor_prod_agrwth,capital_services_pc_growth, location, date)) %>% "
-"0","  mutate(across(where(is.character), as.numeric))"

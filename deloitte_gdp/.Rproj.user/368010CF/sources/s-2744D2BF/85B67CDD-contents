@@ -9,14 +9,23 @@ library(modelr)
 library(GGally)
 ```
 ```{r}
-productivity <- read_csv("clean_data/productivity_factors.csv")
+productivity_factors <- read_csv("clean_data/productivity_factors.csv")
 ```
+###test & train split
 
 ```{r}
 gdp_hr <- productivity_factors %>% 
-  select(-c(multifactor_prod_agrwth,capital_services_pc_growth, location, date)) %>% 
+  dplyr::select(-c(multifactor_prod_agrwth,capital_services_pc_growth, location, date)) %>% 
   mutate(across(where(is.character), as.numeric))
 ```
+
+```{r}
+n_data <- nrow(gdp_hr)
+test_index <- sample(1:n_data, size = n_data*0.2)
+test <- slice(gdp_hr, test_index)
+gdp_hr <- slice(gdp_hr, -test_index)
+```
+
 ```{r}
 gdp_hr %>% 
   ggpairs()
@@ -64,6 +73,9 @@ gdp_hr %>%
 ```{r}
 gdp_hr <- gdp_hr %>% 
   mutate(log_int_trade_pc_gdp = log(int_trade_pc_gdp))
+
+test <- test %>% 
+  mutate(log_int_trade_pc_gdp = log(int_trade_pc_gdp))
 ```
 
 ```{r}
@@ -80,6 +92,9 @@ gdp_hr %>%
 ```
 ```{r}
 gdp_hr <- gdp_hr %>% 
+  mutate(log_transport_investment_eur = log(transport_investment_eur))
+
+test <- test %>% 
   mutate(log_transport_investment_eur = log(transport_investment_eur))
 ```
 
@@ -107,7 +122,7 @@ library(glmulti)
 
 ```{r}
 gdp_hr <- gdp_hr%>%
-  select(-c(int_trade_pc_gdp, transport_investment_eur))
+  dplyr::select(-c(int_trade_pc_gdp, transport_investment_eur))
 ```
 
 ```{r}
@@ -138,6 +153,16 @@ summary(glmulti_model)
 ```{r}
 plot(glmulti_model)
 ```
+###check for overfitting 
+```{r}
+test_model <- lm(gdp_hr_worked~1+adult_education_pc+avg_wage+trade_union_density+unemployment_pc+r_and_d_spending_pc+flexible_work_pc+log_int_trade_pc_gdp+log_transport_investment_eur+trade_union_density:adult_education_pc+unemployment_pc:trade_union_density+r_and_d_spending_pc:trade_union_density+r_and_d_spending_pc:unemployment_pc+flexible_work_pc:adult_education_pc+flexible_work_pc:avg_wage+flexible_work_pc:unemployment_pc+log_int_trade_pc_gdp:adult_education_pc+log_int_trade_pc_gdp:avg_wage+log_int_trade_pc_gdp:trade_union_density+log_int_trade_pc_gdp:unemployment_pc+log_int_trade_pc_gdp:r_and_d_spending_pc+log_transport_investment_eur:avg_wage+log_transport_investment_eur:unemployment_pc+log_transport_investment_eur:r_and_d_spending_pc+log_transport_investment_eur:flexible_work_pc, data = test)
+```
+
+```{r}
+summary(test_model)
+```
+
+
 ```{r}
 library(relaimpo)
 ```
