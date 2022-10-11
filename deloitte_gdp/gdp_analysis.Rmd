@@ -40,8 +40,23 @@ gdp_clean_ts %>%
 
 ###GDP annual growth/capita vs RoW
 ```{r}
+gdp_clean_ts <- gdp_clean_ts %>% 
+ mutate(rolling_avg = slider::slide_dbl(
+           gdp_growth_per_capita, mean, .before = 3, .after = 0))
+```
+
+```{r}
 gdp_clean_ts %>% 
-  ggplot(aes(x = date, y = gdp_growth_per_capita, colour = development_flag))+
-  geom_line(position = "dodge")
+  group_by(development_flag) %>% 
+  ggplot()+
+  geom_col(aes(x = date, y = gdp_growth_per_capita), fill = "steelblue")+
+  geom_line(aes(x = date,
+                y = rolling_avg), colour = "red", linetype = "dashed")+
+  facet_wrap(~development_flag, nrow = 2)+
+  theme_minimal()+
+  labs(title = "UK vs Developed Countries GDP/Capita Growth - annual %",
+       x = "Date",
+       y = "GDP/Capita annual growth ")
+
 ```
 

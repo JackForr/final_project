@@ -1,8 +1,0 @@
-"0","bop <- bop %>% "
-"0","  select(-c(starts_with(""indicator_""), `1960`))"
-"0",""
-"0","imports <- imports %>% "
-"0","  select(-c(starts_with(""indicator_"")))"
-"0",""
-"0","exports <- exports %>% "
-"0","  select(-c(starts_with(""indicator_""), `1960`))"

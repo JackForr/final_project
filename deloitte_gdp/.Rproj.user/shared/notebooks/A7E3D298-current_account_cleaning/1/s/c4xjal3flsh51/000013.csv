@@ -1,8 +1,0 @@
-"0","exports <- exports %>% "
-"0","  group_by(country_name) %>% "
-"0","  mutate(exports_pc_gdp = coalesce("
-"0","    exports_pc_gdp, median(exports_pc_gdp, na.rm = TRUE)"
-"0","  ))"
-"0",""
-"0","exports <- exports %>% "
-"0","  mutate(log_exports_pc_gdp = log(exports_pc_gdp)) #log could be for models etc"

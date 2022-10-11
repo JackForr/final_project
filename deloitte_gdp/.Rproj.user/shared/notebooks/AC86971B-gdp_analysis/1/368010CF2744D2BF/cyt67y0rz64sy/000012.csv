@@ -1,3 +1,0 @@
-"0","gdp_clean_ts <- gdp_clean_ts %>% "
-"0"," mutate(rolling_avg = slider::slide_dbl("
-"0","           gdp_growth_per_capita, mean, .before = 3, .after = 0))"

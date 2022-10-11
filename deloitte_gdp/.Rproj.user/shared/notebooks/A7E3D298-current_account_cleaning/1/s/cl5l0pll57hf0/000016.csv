@@ -1,2 +1,0 @@
-"0","financial_account <- financial_account %>% "
-"0","  select(-c(starts_with(""indicator_"")))"

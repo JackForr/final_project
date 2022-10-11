@@ -1,1 +1,0 @@
-"0","basic_model <- lm(multifactor_prod_agrwth~1+adult_education_pc+avg_wage+trade_union_density+transport_investment_eur+unemployment_pc+r_and_d_spending_pc+log_transport_investment_eur+log_int_trade_pc_gdp, data = tfp_growth)"

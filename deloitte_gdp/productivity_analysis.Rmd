@@ -31,16 +31,24 @@ productivity_ts %>%
   mutate(label = if_else(date == max(date), as.character(development_flag), NA_character_)) %>% 
   ggplot(aes(x = date, y = gdp_hr_worked, colour = development_flag))+
   geom_line()+
+  geom_vline(xintercept = as.numeric(productivity_ts$date[39]), linetype = 1, colour = "red")+
+  annotate("text", x = productivity_ts$date[38], 
+           y = 60, label = "2008 GFC", angle = 90, colour = "red")+
   theme_minimal()+
-  geom_label_repel(aes(label = label),
+  theme(legend.position = "none")+
+  geom_text_repel(aes(label = label),
                    nudge_x = 5, 
-                   na.rm = TRUE)
+                   na.rm = TRUE)+
+  labs(title = "Labour Productivity - GDP/hr worked",
+       x = "Date",
+       y = "GDP/hr Worked ($)")
 ```
 
 
 
 ###labour productivity annual change
 ```{r}
+library(readxl)
 productivity_growth <- read_excel("raw_data/labour_annual_growth.xls") %>% 
   filter(str_detect(`Title`, "Q")) %>% 
   rename("date" = "Title", 
@@ -77,8 +85,17 @@ productivity_growth %>%
 ###TFP vs Row
 ```{r}
 productivity_ts %>% 
-  ggplot(aes(x = date, y = multifactor_prod_agrwth, colour = development_flag))+
-  geom_line()
+  mutate(rolling_avg_tfp = slider::slide_dbl(
+           multifactor_prod_agrwth, mean, .before = 4, .after = 0)) %>% 
+  filter(date > "1984-01-01") %>% 
+  ggplot()+
+  geom_col(aes(x = date, y = multifactor_prod_agrwth), fill = "steelblue")+
+  geom_line(aes(x = date, y = rolling_avg_tfp), colour = "red", linetype = "dashed")+
+  facet_wrap(~development_flag, nrow = 2)+
+  theme_minimal()+
+  labs(title = "Total Factor Productivty - % annual change",
+       x = "Date",
+       y = "TFP - % annual change")
 ```
 
 ###capital productivity 
@@ -86,5 +103,204 @@ productivity_ts %>%
 productivity_ts %>% 
   ggplot(aes(x = date, y = capital_services_pc_growth, colour = development_flag))+
   geom_line()
+```
+
+```{r}
+productivity_factors <- read_csv("clean_data/productivity_factors.csv")
+```
+
+```{r}
+productivity_factors %>% 
+  filter(date > "2008-01-01") %>% 
+  group_by(location) %>% 
+  summarise(mean_investment = mean(r_and_d_spending_pc, na.rm = TRUE)) %>% 
+  arrange(desc(mean_investment))
+```
+```{r}
+productivity_factors %>% 
+  filter(date > "2008-01-01") %>% 
+  group_by(location) %>% 
+  mutate(vocational_pupils_prop = vocational_pupils / population) %>% 
+  summarise(mean_vocation_pupil_prop = mean(vocational_pupils_prop, na.rm = TRUE)) %>%
+  arrange(desc(mean_vocation_pupil_prop))
+```
+```{r}
+productivity_factors %>% 
+  filter(date > "2008-01-01") %>% 
+  group_by(location) %>% 
+  summarise(mean_flexible = mean(flexible_work_pc, na.rm = TRUE)) %>%
+  arrange(desc(mean_flexible))
+```
+###hypothesis testing
+```{r}
+productivity_growth <- productivity_growth %>% 
+  mutate(post_gfc = if_else(date < "2008-01-01", "pre crisis", "post crisis"))
+```
+```{r}
+productivity_growth %>% 
+  ggplot(aes(x = post_gfc, y = prod_annual_growth))+
+  geom_boxplot()
+```
+
+```{r}
+#create null distribution
+library(infer)
+null_distribution <- productivity_growth %>% 
+  specify(prod_annual_growth ~ post_gfc) %>% 
+  hypothesize(null = "independence") %>% 
+  generate(reps = 1000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("pre crisis", "post crisis"))
+
+head(null_distribution)
+```
+
+```{r}
+#sample statistic
+observed_stat <- productivity_growth %>% 
+  specify(prod_annual_growth ~ post_gfc) %>% 
+  calculate(stat = "diff in means", order = c("pre crisis", "post crisis"))
+```
+
+```{r}
+#visualise statistic on null distribution
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+```
+
+```{r}
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value #very close to zero, therefore pre crisis productivity growth was significantly higher than post crisis
+```
+
+###uk vs developed tfp significance test & pre vs post
+```{r}
+productivity <- productivity %>% 
+   mutate(post_gfc = if_else(date < "2008-01-01", "pre crisis", "post crisis")) %>% 
+  select(multifactor_prod_agrwth, post_gfc)
+```
+```{r}
+productivity %>% 
+  ggplot(aes(x = post_gfc, y = multifactor_prod_agrwth))+
+  geom_boxplot()
+```
+
+```{r}
+null_distribution <- productivity %>% 
+  specify(multifactor_prod_agrwth ~ post_gfc) %>% 
+  hypothesize(null = "independence") %>% 
+  generate(reps = 1000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("pre crisis", "post crisis"))
+
+head(null_distribution)
+```
+
+```{r}
+observed_stat <- productivity %>% 
+  specify(multifactor_prod_agrwth ~ post_gfc) %>% 
+  calculate(stat = "diff in means", order = c("pre crisis", "post crisis"))
+```
+
+```{r}
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+```
+
+```{r}
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value #very close to zero, therefore pre crisis tfp growth was significantly higher than post crisis
+```
+```{r}
+productivity <- productivity_ts %>% 
+  filter(date >= "2008-01-01") %>% 
+  dplyr::select(multifactor_prod_agrwth) %>% 
+  pivot_wider(names_from = development_flag, values_from = multifactor_prod_agrwth) %>% 
+  mutate(diff = developed - UK) %>% 
+  filter(!is.na(diff))
+```
+
+```{r}
+productivity %>% 
+  ggplot(aes(x = diff))+
+  geom_histogram() #mostly positive, suggesting developed countries have had higher tfp growth sicne the crisis
+```
+```{r}
+null_distribution <- productivity %>% 
+  specify(response = diff) %>% 
+  hypothesize(null = "point", mu = 0) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+```
+
+```{r}
+observed_stat <- productivity %>% 
+  specify(response = diff) %>% 
+  calculate(stat = "mean")
+
+observed_stat
+```
+```{r}
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+```
+```{r}
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value #very close to zero, therefore post crisis tfp growth was significantly higher in developed countries compared to the UK 
+```
+
+###productivity by industry
+```{r}
+industry_prod <- read_csv("clean_data/industry_prod.csv")
+```
+
+```{r}
+industry_prod_ts <- industry_prod %>% 
+  filter(location == "GBR") %>% 
+  as_tsibble(index = date, key = activity_2) %>% 
+  rename("gva_hr_growth" = "value")
+```
+
+```{r}
+industry_prod_ts %>% 
+  mutate(rolling_avg_prod = slider::slide_dbl(
+           gva_hr_growth, mean, .before = 4, .after = 0)) %>%
+  ggplot()+
+  geom_col(aes(x = date, y = gva_hr_growth), fill = "steelblue")+
+  geom_line(aes(x = date, y = rolling_avg_prod), colour = "red", linetype = "dashed")+
+  geom_vline(xintercept = as.numeric(industry_prod_ts$date[15]), linetype = 1, colour = "red")+
+  annotate("text", x = industry_prod_ts$date[14], 
+           y = 5, label = "2008 GFC", angle = 90, colour = "red")+
+  facet_wrap(~ activity_2, nrow = 2)+
+  theme_minimal()+
+  labs(title = "Productivity growth in manufacturing and financial industries",
+       x = "Date",
+       y = "GVA per hour worked annual change (%)")
+```
+```{r}
+industry_prod %>% 
+  filter(location == "GBR") %>% 
+  mutate("gfc" = if_else(date < "2008-01-01", "pre gfc", "post gfc")) %>% 
+  group_by(gfc, activity_2) %>% 
+  summarise(mean_prod = mean(value)) %>% 
+  ggplot(aes(x = gfc, y = mean_prod, fill = gfc))+
+  geom_col(position = "dodge")+
+  geom_text(aes(label = round(mean_prod, 2)), vjust = 0.8)+
+  facet_wrap( ~ activity_2)+
+  theme_minimal()+
+  labs(title = "Mean Productivity growth pre vs post GFC",
+       x = "Time period",
+       y = "Mean per hour worked annual change (%)")+
+  geom_hline(yintercept = 0)+
+  theme(legend.position = "none",
+        panel.grid = element_blank(),
+        axis.text.y = element_blank())
 ```
 

@@ -1,8 +1,0 @@
-"0","productivity_ts <- productivity %>% "
-"0","  group_by(date, development_flag) %>% "
-"0","  summarise(across(c(multifactor_prod_agrwth, gdp_hr_worked, capital_services_pc_growth), ~mean(.x, na.rm = TRUE))) %>% "
-"0","  ungroup() %>% "
-"0","  as_tsibble(index = date, key = development_flag)"
-"1","[38;5;232m`summarise()` has grouped output by 'date'. You can override using the
-`.groups` argument.[39m
-"

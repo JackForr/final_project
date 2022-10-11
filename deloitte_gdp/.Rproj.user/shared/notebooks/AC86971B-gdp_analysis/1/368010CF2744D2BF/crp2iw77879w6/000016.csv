@@ -1,3 +1,0 @@
-"0","gdp_clean_ts <- gdp_clean_ts %>% "
-"0","  group_by(development_flag) %>% "
-"0","  summarise(across(gdp_growth_per_capita:log_gdp_per_capita, ~mean(.x, na.rm = TRUE)))"
